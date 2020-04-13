@@ -48,8 +48,13 @@ public class GitHubSourceTask extends SourceTask {
 
     private void initializeLastVariables(){
     	//adding User
-    	ownerLogins.add("sajal89");
-    	ownerLogins.add("soumikroy80");
+    	String[] owners = config.getRepoOwners().split(",");
+    	for (String owner : owners) {
+    		ownerLogins.add(owner);
+		}
+    	
+    	//ownerLogins.add("sajal89");
+    	//ownerLogins.add("soumikroy80");
     	populateRepos();
     	
         Map<String, Object> lastSourceOffset = null;

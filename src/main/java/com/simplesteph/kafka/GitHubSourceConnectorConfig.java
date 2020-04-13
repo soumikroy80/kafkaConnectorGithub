@@ -18,6 +18,7 @@ public class GitHubSourceConnectorConfig extends AbstractConfig {
     private static final String TOPIC_DOC = "Topic to write to";
 
     public static final String OWNER_CONFIG = "github.owner";
+    public static final String REPO_OWNERS = "github.owners";
     private static final String OWNER_DOC = "Owner of the repository you'd like to follow";
 
     public static final String REPO_CONFIG = "github.repo";
@@ -53,9 +54,10 @@ public class GitHubSourceConnectorConfig extends AbstractConfig {
     public static ConfigDef conf() {
         return new ConfigDef()
                 .define(TOPIC_CONFIG, Type.STRING, Importance.HIGH, TOPIC_DOC)
-                .define(OWNER_CONFIG, Type.STRING, Importance.HIGH, OWNER_DOC)
-                .define(REPO_CONFIG, Type.STRING, Importance.HIGH, REPO_DOC)
-                .define(NODE_TYPE_CONFIG, Type.STRING, Importance.HIGH, NODE_TYPE_DOC)
+                //.define(OWNER_CONFIG, Type.STRING, Importance.HIGH, OWNER_DOC)
+                .define(REPO_OWNERS, Type.STRING, Importance.HIGH, OWNER_DOC)
+                //.define(REPO_CONFIG, Type.STRING, Importance.HIGH, REPO_DOC)
+                //.define(NODE_TYPE_CONFIG, Type.STRING, Importance.HIGH, NODE_TYPE_DOC)
                 .define(BATCH_SIZE_CONFIG, Type.INT, 100, new BatchSizeValidator(), Importance.LOW, BATCH_SIZE_DOC)
                 .define(SINCE_CONFIG, Type.STRING, ZonedDateTime.now().minusYears(1).toInstant().toString(),
                         new TimestampValidator(), Importance.HIGH, SINCE_DOC)
@@ -63,6 +65,10 @@ public class GitHubSourceConnectorConfig extends AbstractConfig {
                 .define(AUTH_PASSWORD_CONFIG, Type.PASSWORD, "", Importance.HIGH, AUTH_PASSWORD_DOC);
     }
 
+    public String getRepoOwners() {
+        return this.getString(REPO_OWNERS);
+    }
+    
     public String getOwnerConfig() {
         return this.getString(OWNER_CONFIG);
     }
