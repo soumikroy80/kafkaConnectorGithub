@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #change 1804_2
 #issue # 1004_07
+#issue # 1004_08
 export CLASSPATH="$(find target/ -type f -name '*.jar'| grep '\-package' | tr '\n' ':')"
 if hash docker 2>/dev/null; then
     # for docker lovers
