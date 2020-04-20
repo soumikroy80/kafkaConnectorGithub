@@ -4,10 +4,10 @@ import java.time.Instant;
 import org.json.JSONObject;
 
 public class Repository {
-	private String repoName;
-	private String repoOwner;
-	private String repoDescription;
-	private long createdAt;
+	private String owner;
+	private String repository;
+	private String message;
+	private long created_at;
 	private String node_type = "REPO";
 	
 	
@@ -21,47 +21,46 @@ public class Repository {
 		this.node_type = node_type;
 	}
 
-	public String getRepoName() {
-		return repoName;
+
+	public String getOwner() {
+		return owner;
 	}
 
-	public void setRepoName(String repoName) {
-		this.repoName = repoName;
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
-	public String getRepoDescription() {
-		return repoDescription;
+	public String getRepository() {
+		return repository;
 	}
 
-	public void setRepoDescription(String repoDescription) {
-		this.repoDescription = repoDescription;
+	public void setRepository(String repository) {
+		this.repository = repository;
 	}
 
-	public String getRepoOwner() {
-		return repoOwner;
+	public String getMessage() {
+		return message;
 	}
 
-	public void setRepoOwner(String repoOwner) {
-		this.repoOwner = repoOwner;
-	}
-	
-	
-
-	public long getCreatedAt() {
-		return createdAt;
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
-	public void setCreatedAt(long createdAt) {
-		this.createdAt = createdAt;
+	public long getCreated_at() {
+		return created_at;
+	}
+
+	public void setCreated_at(long created_at) {
+		this.created_at = created_at;
 	}
 
 	public static Repository formJson(JSONObject jsonObject) {
 		Repository repo = new Repository();
 		long crtd =Instant.parse(jsonObject.getString("created_at")).getEpochSecond();
-		repo.setCreatedAt(crtd*1000);
+		repo.setCreated_at(crtd*1000);
 		if (!jsonObject.isNull("description"))
-			repo.setRepoDescription(jsonObject.getString("description"));
-		repo.setRepoName(jsonObject.getString("name"));
+			repo.setMessage(jsonObject.getString("description"));
+		repo.setRepository(jsonObject.getString("name"));
 		return repo;
 
 	}

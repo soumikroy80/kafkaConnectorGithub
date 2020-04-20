@@ -92,9 +92,9 @@ public class GithubProducer {
 				jsonResponse = gitClient.getNextItems(requestUrl);
 				for (Object obj : jsonResponse.getArray()) {
 					Repository repo = Repository.formJson((JSONObject) obj);
-					repo.setRepoOwner(owner);
+					repo.setOwner(owner);
 					// push repository into topic
-					log.info("Repos: " + repo.getRepoName() + "," + repo.getRepoOwner());
+					log.info("Repos: " + repo.getRepository() + "," + repo.getOwner());
 					sendMessage(repo);
 				}
 
