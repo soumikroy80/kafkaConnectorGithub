@@ -7,7 +7,19 @@ public class Repository {
 	private String repoName;
 	private String repoOwner;
 	private String repoDescription;
-	private Instant createdAt;
+	private long createdAt;
+	private String node_type = "REPO";
+	
+	
+	
+
+	public String getNode_type() {
+		return node_type;
+	}
+
+	public void setNode_type(String node_type) {
+		this.node_type = node_type;
+	}
 
 	public String getRepoName() {
 		return repoName;
@@ -25,14 +37,6 @@ public class Repository {
 		this.repoDescription = repoDescription;
 	}
 
-	public Instant getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Instant createddAt) {
-		this.createdAt = createddAt;
-	}
-
 	public String getRepoOwner() {
 		return repoOwner;
 	}
@@ -40,10 +44,21 @@ public class Repository {
 	public void setRepoOwner(String repoOwner) {
 		this.repoOwner = repoOwner;
 	}
+	
+	
+
+	public long getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(long createdAt) {
+		this.createdAt = createdAt;
+	}
 
 	public static Repository formJson(JSONObject jsonObject) {
 		Repository repo = new Repository();
-		repo.setCreatedAt(Instant.parse(jsonObject.getString("created_at")));
+		long crtd =Instant.parse(jsonObject.getString("created_at")).getEpochSecond();
+		repo.setCreatedAt(crtd*1000);
 		if (!jsonObject.isNull("description"))
 			repo.setRepoDescription(jsonObject.getString("description"));
 		repo.setRepoName(jsonObject.getString("name"));
