@@ -14,6 +14,7 @@ import java.util.Map;
 
 public class GitHubSourceConnectorConfig extends AbstractConfig {
 
+	
     public static final String TOPIC_CONFIG = "topic";
     private static final String TOPIC_DOC = "Topic to write to";
     public static final String OWNER_CONFIG = "github.owner";
