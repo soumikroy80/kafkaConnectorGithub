@@ -16,7 +16,6 @@ public class GitHubSourceConnectorConfig extends AbstractConfig {
 
     public static final String TOPIC_CONFIG = "topic";
     private static final String TOPIC_DOC = "Topic to write to";
-
     public static final String OWNER_CONFIG = "github.owner";
     public static final String REPO_OWNERS = "github.owners";
     private static final String OWNER_DOC = "Owner of the repository you'd like to follow";
