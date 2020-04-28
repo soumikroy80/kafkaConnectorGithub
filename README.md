@@ -49,4 +49,4 @@ The simplest way to run `run.sh` is to have docker installed. It will pull a Doc
 
 Note: Java 8 is required for this connector. 
 
-TODO
+
