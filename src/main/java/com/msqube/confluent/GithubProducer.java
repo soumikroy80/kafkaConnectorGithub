@@ -25,6 +25,8 @@ import com.msqube.confluent.model.Repository;
 @Component
 public class GithubProducer {
 
+	private static final String OWNER_ORG = "owner.org";
+	private static final String OWNER_TOKEN = "owner.token";
 	private static final String SECURITY_PROTOCOL = "security.protocol";
 	private static final String VALUE_SERIALIZER = "value.serializer";
 	private static final String KEY_SERIALIZER = "key.serializer";
@@ -47,15 +49,9 @@ public class GithubProducer {
 	private GitHubAPIHttpClient gitClient;
 
 	private KafkaProducer<String, Repository> producer = null;
-	public List<String> ownerLogins = new ArrayList<String>();
 
 	private void initializeVaraiables() {
 
-		String[] logins = env.getProperty(OWNER_LOGIN).split(",");
-		// adding User
-		if (logins.length > 0) {
-			ownerLogins = Arrays.asList(logins);
-		}
 
 		Properties config = new Properties();
 		try {
@@ -86,19 +82,18 @@ public class GithubProducer {
 		initializeVaraiables();
 
 		try {
-			for (String owner : ownerLogins) {
-				String requestUrl = String.format("https://api.github.com/users/%s/repos", owner);
+				
+				String requestUrl = String.format("https://api.github.com/orgs/%s/repos", env.getProperty(OWNER_ORG));
 				JsonNode jsonResponse;
-				jsonResponse = gitClient.getNextItems(requestUrl);
+				jsonResponse = gitClient.getNextItems(requestUrl,env.getProperty(OWNER_TOKEN));
 				for (Object obj : jsonResponse.getArray()) {
 					Repository repo = Repository.formJson((JSONObject) obj);
-					repo.setOwner(owner);
+					repo.setOwner("Pulse42-io");
 					// push repository into topic
 					log.info("Repos: " + repo.getRepository() + "," + repo.getOwner());
 					sendMessage(repo);
 				}
 
-			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			log.error(e.getMessage());

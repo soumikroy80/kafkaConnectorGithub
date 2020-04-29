@@ -20,11 +20,11 @@ public class GitHubAPIHttpClient {
 
     private static final Logger log = LoggerFactory.getLogger(GitHubAPIHttpClient.class);
 
-    protected JsonNode getNextItems( String url) throws InterruptedException {
+    protected JsonNode getNextItems( String url, String token) throws InterruptedException {
 
         HttpResponse<JsonNode> jsonResponse;
         try {
-            jsonResponse = getNextItemsAPI(url);
+            jsonResponse = getNextItemsAPI(url,token);
 
             // deal with headers in any case
             Headers headers = jsonResponse.getHeaders();
@@ -36,7 +36,7 @@ public class GitHubAPIHttpClient {
                 case 403:
                     // we have issues too many requests.
                     log.info(jsonResponse.getBody().getObject().getString("message"));
-                    return getNextItems( url);
+                    return getNextItems( url,token);
                 default:
                     log.error(String.valueOf(jsonResponse.getStatus()));
                     log.error(jsonResponse.getBody().toString());
@@ -44,7 +44,7 @@ public class GitHubAPIHttpClient {
                     log.error("Unknown error: Sleeping 5 seconds " +
                             "before re-trying");
                     Thread.sleep(5000L);
-                    return getNextItems(url);
+                    return getNextItems(url,token);
             }
         } catch (UnirestException e) {
             e.printStackTrace();
@@ -53,8 +53,9 @@ public class GitHubAPIHttpClient {
         }
     }
 
-    protected HttpResponse<JsonNode> getNextItemsAPI( String url) throws UnirestException {
+    protected HttpResponse<JsonNode> getNextItemsAPI( String url, String token) throws UnirestException {
         GetRequest unirest = Unirest.get(url);
+        unirest.header("Authorization", "Bearer "+token);
         log.debug(String.format("GET %s", unirest.getUrl()));
         return unirest.asJson();
     }

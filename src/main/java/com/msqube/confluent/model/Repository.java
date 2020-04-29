@@ -8,7 +8,7 @@ public class Repository {
 	private String repository;
 	private String message;
 	private long created_at;
-	private String node_type = "REPO";
+	private String node_type = "REPOS";
 	
 	
 	
