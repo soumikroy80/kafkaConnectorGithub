@@ -27,7 +27,6 @@ public class GitHubSourceTask extends SourceTask {
     public GitHubSourceConnectorConfig config;
 
     protected Instant nextQuerySince;
-    public static List<String> ownerLogins=new ArrayList<String>();
     public static List<Repository> repos=new ArrayList<Repository>();
 
     GitHubAPIHttpClient gitHubHttpAPIClient;
@@ -49,9 +48,6 @@ public class GitHubSourceTask extends SourceTask {
     }
 
     private void initializeLastVariables(){
-    	//adding User
-    	ownerLogins.add("sajal89");
-    	ownerLogins.add("soumikroy80");
     	populateRepos();
     	
         Map<String, Object> lastSourceOffset = null;
@@ -89,7 +85,7 @@ public class GitHubSourceTask extends SourceTask {
     				repo.getRepoOwner(),
     				repo.getRepoName(),
     				nextQuerySince.toString());
-    		jsonResponse = gitHubHttpAPIClient.getNextItems(requestUrl);
+    		jsonResponse = gitHubHttpAPIClient.getNextItems(requestUrl,config.getAuthTokenConfig());
     		for (Object obj : jsonResponse.getArray()) {
     			Issue issue = Issue.fromJson((JSONObject) obj);
     			issue.setOwner(repo.getRepoOwner());
@@ -111,7 +107,7 @@ public class GitHubSourceTask extends SourceTask {
     				repo.getRepoOwner(),
     				repo.getRepoName(),
     				nextQuerySince.toString());
-    		jsonResponse = gitHubHttpAPIClient.getNextItems(requestUrl);
+    		jsonResponse = gitHubHttpAPIClient.getNextItems(requestUrl,config.getAuthTokenConfig());
     		for (Object obj : jsonResponse.getArray()) {
     			Commit commit = Commit.fromJson((JSONObject) obj);
     			commit.setOwner(repo.getRepoOwner());
@@ -157,17 +153,15 @@ public class GitHubSourceTask extends SourceTask {
     
     public void populateRepos() {
     	try {
-    		for(String owner: ownerLogins) {
-    			String requestUrl= String.format("https://api.github.com/users/%s/repos",owner);
+    			String requestUrl= String.format("https://api.github.com/orgs/%s/repos",config.getOwnerConfig());
     			JsonNode jsonResponse;
-    			jsonResponse = gitHubHttpAPIClient.getNextItems(requestUrl);
+    			jsonResponse = gitHubHttpAPIClient.getNextItems(requestUrl,config.getAuthTokenConfig());
     			for (Object obj : jsonResponse.getArray()) {
     			Repository repo=Repository.formJson((JSONObject) obj);
-    			repo.setRepoOwner(owner);
+    			repo.setRepoOwner(config.getOwnerConfig());
     			repos.add(repo);
     			}
 
-    		}
     	} catch (InterruptedException e) {
     		e.printStackTrace();
     		log.error(e.getMessage());

@@ -31,11 +31,11 @@ public class GitHubAPIHttpClient {
         this.config = config;
     }
 
-    protected JsonNode getNextItems( String url) throws InterruptedException {
+    protected JsonNode getNextItems( String url,String token) throws InterruptedException {
 
         HttpResponse<JsonNode> jsonResponse;
         try {
-            jsonResponse = getNextItemsAPI(url);
+            jsonResponse = getNextItemsAPI(url,token);
 
             // deal with headers in any case
             Headers headers = jsonResponse.getHeaders();
@@ -57,7 +57,7 @@ public class GitHubAPIHttpClient {
                     long sleepTime = XRateReset - Instant.now().getEpochSecond();
                     log.info(String.format("Sleeping for %s seconds", sleepTime ));
                     Thread.sleep(1000 * sleepTime);
-                    return getNextItems( url);
+                    return getNextItems( url,token);
                 default:
                     log.error(String.valueOf(jsonResponse.getStatus()));
                     log.error(jsonResponse.getBody().toString());
@@ -65,7 +65,7 @@ public class GitHubAPIHttpClient {
                     log.error("Unknown error: Sleeping 5 seconds " +
                             "before re-trying");
                     Thread.sleep(5000L);
-                    return getNextItems(url);
+                    return getNextItems(url,token);
             }
         } catch (UnirestException e) {
             e.printStackTrace();
@@ -74,16 +74,14 @@ public class GitHubAPIHttpClient {
         }
     }
 
-    protected HttpResponse<JsonNode> getNextItemsAPI( String url) throws UnirestException {
+    protected HttpResponse<JsonNode> getNextItemsAPI( String url, String token) throws UnirestException {
         GetRequest unirest = Unirest.get(url);
-        if (!config.getAuthUsername().isEmpty() && !config.getAuthPassword().isEmpty() ){
-            unirest = unirest.basicAuth(config.getAuthUsername(), config.getAuthPassword());
-        }
+        unirest.header("Authorization", "Bearer "+token);
         log.debug(String.format("GET %s", unirest.getUrl()));
         return unirest.asJson();
     }
 
-    protected String constructUrl(Integer page, Instant since){
+   /* protected String constructUrl(Integer page, Instant since){
         return String.format(
                 "https://api.github.com/repos/%s/%s/issues?page=%s&per_page=%s&since=%s&state=all&direction=asc&sort=updated",
                 config.getOwnerConfig(),
@@ -91,7 +89,7 @@ public class GitHubAPIHttpClient {
                 page,
                 config.getBatchSize(),
                 since.toString());
-    }
+    }*/
 
     public void sleep() throws InterruptedException {
         long sleepTime = (long) Math.ceil(

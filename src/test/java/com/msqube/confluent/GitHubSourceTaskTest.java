@@ -27,9 +27,8 @@ public class GitHubSourceTaskTest {
     private Map<String, String> initialConfig() {
         Map<String, String> baseProps = new HashMap<>();
         baseProps.put(OWNER_CONFIG, "apache");
-        baseProps.put(REPO_CONFIG, "kafka");
-        baseProps.put(NODE_TYPE_CONFIG, "ISSUE");
         baseProps.put(SINCE_CONFIG, "2017-04-26T01:23:44Z");
+        baseProps.put(OWNER_TOKEN_CONFIG, "token----keys");
         baseProps.put(BATCH_SIZE_CONFIG, batchSize.toString());
         baseProps.put(TOPIC_CONFIG, "github-issues");
         return baseProps;
@@ -43,7 +42,7 @@ public class GitHubSourceTaskTest {
         gitHubSourceTask.gitHubHttpAPIClient = new GitHubAPIHttpClient(gitHubSourceTask.config);
         String url = "https://api.github.com/repos/soumikroy80/microservicepoc/issues?since=2020-02-29T00:00:00Z&state=all&direction=asc&sort=updated";
         System.out.println(url);
-        HttpResponse<JsonNode> httpResponse = gitHubSourceTask.gitHubHttpAPIClient.getNextItemsAPI(url);
+        HttpResponse<JsonNode> httpResponse = gitHubSourceTask.gitHubHttpAPIClient.getNextItemsAPI(url,gitHubSourceTask.config.getAuthTokenConfig());
         if (httpResponse.getStatus() != 403) {
             assertEquals(200, httpResponse.getStatus());
             Set<String> headers = httpResponse.getHeaders().keySet();

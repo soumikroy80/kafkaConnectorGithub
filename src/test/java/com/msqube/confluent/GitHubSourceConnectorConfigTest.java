@@ -22,11 +22,10 @@ public class GitHubSourceConnectorConfigTest {
     public void setUpInitialConfig() {
         config = new HashMap<>();
         config.put(OWNER_CONFIG, "foo");
-        config.put(REPO_CONFIG, "bar");
-        config.put(NODE_TYPE_CONFIG, "ISSUE");
         config.put(SINCE_CONFIG, "2017-04-26T01:23:45Z");
         config.put(BATCH_SIZE_CONFIG, "100");
         config.put(TOPIC_CONFIG, "github-issues");
+        config.put(OWNER_TOKEN_CONFIG, "token----keys");
     }
 
     @Test
@@ -41,12 +40,6 @@ public class GitHubSourceConnectorConfigTest {
                 .allMatch(configValue -> configValue.errorMessages().size() == 0));
     }
 
-    @Test
-    public void canReadConfigCorrectly() {
-        GitHubSourceConnectorConfig config = new GitHubSourceConnectorConfig(this.config);
-        config.getAuthPassword();
-
-    }
 
     @Test
     public void validateSince() {
@@ -66,18 +59,5 @@ public class GitHubSourceConnectorConfigTest {
         assertTrue(configValue.errorMessages().size() > 0);
     }
 
-    @Test
-    public void validateUsername() {
-        config.put(AUTH_USERNAME_CONFIG, "username");
-        ConfigValue configValue = configDef.validateAll(config).get(AUTH_USERNAME_CONFIG);
-        assertEquals(configValue.errorMessages().size(), 0);
-    }
-
-    @Test
-    public void validatePassword() {
-        config.put(AUTH_PASSWORD_CONFIG, "password");
-        ConfigValue configValue = configDef.validateAll(config).get(AUTH_PASSWORD_CONFIG);
-        assertEquals(configValue.errorMessages().size(), 0);
-    }
 
 }
