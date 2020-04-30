@@ -88,7 +88,7 @@ public class GithubProducer {
 				jsonResponse = gitClient.getNextItems(requestUrl,env.getProperty(OWNER_TOKEN));
 				for (Object obj : jsonResponse.getArray()) {
 					Repository repo = Repository.formJson((JSONObject) obj);
-					repo.setOwner("Pulse42-io");
+					repo.setOwner(env.getProperty(OWNER_ORG));
 					// push repository into topic
 					log.info("Repos: " + repo.getRepository() + "," + repo.getOwner());
 					sendMessage(repo);
