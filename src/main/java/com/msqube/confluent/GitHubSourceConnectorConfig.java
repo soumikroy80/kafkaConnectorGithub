@@ -19,7 +19,7 @@ public class GitHubSourceConnectorConfig extends AbstractConfig {
     public static final String TOPIC_CONFIG = "topic";
     private static final String TOPIC_DOC = "Topic to write to";
 
-    public static final String OWNER_CONFIG = "github.owner";
+    public static final String ORGANIZATION_CONFIG = "github.organization";
     private static final String OWNER_DOC = "Owner of the repository you'd like to follow";
 
     public static final String OWNER_TOKEN_CONFIG = "owner.token";
@@ -45,7 +45,7 @@ public class GitHubSourceConnectorConfig extends AbstractConfig {
     public static ConfigDef conf() {
         return new ConfigDef()
                 .define(TOPIC_CONFIG, Type.STRING, Importance.HIGH, TOPIC_DOC)
-                .define(OWNER_CONFIG, Type.STRING, Importance.HIGH, OWNER_DOC)
+                .define(ORGANIZATION_CONFIG, Type.STRING, Importance.HIGH, OWNER_DOC)
                 .define(OWNER_TOKEN_CONFIG, Type.STRING, Importance.HIGH, OWNER_TOKEN_DOC)
                 .define(BATCH_SIZE_CONFIG, Type.INT, 100, new BatchSizeValidator(), Importance.LOW, BATCH_SIZE_DOC)
                 .define(SINCE_CONFIG, Type.STRING, ZonedDateTime.now().minusYears(1).toInstant().toString(),
@@ -53,7 +53,7 @@ public class GitHubSourceConnectorConfig extends AbstractConfig {
     }
 
     public String getOwnerConfig() {
-        return this.getString(OWNER_CONFIG);
+        return this.getString(ORGANIZATION_CONFIG);
     }
 
     public String getAuthTokenConfig() {
