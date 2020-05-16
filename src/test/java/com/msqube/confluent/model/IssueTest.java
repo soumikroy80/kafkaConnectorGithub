@@ -70,19 +70,11 @@ public class IssueTest {
     public void canParseJson(){
         // issue
         Issue issue = Issue.fromJson(issueJson);
-        assertEquals(issue.getUrl(), "https://api.github.com/repos/apache/kafka/issues/2800");
         assertEquals(issue.getTitle(), "added interface to allow producers to create a ProducerRecord without…");
         assertEquals(issue.getCreatedAt().toString(), "2017-04-04T06:47:09Z");
         assertEquals(issue.getUpdatedAt().toString(), "2017-04-19T22:36:21Z");
-        assertEquals(issue.getNumber(), (Integer) 2800);
         assertEquals(issue.getState(), "closed");
 
-        // user
-        User user = issue.getUser();
-        assertEquals(user.getId(), (Integer) 20851561);
-        assertEquals(user.getUrl(), "https://api.github.com/users/simplesteph");
-        assertEquals(user.getHtmlUrl(), "https://github.com/simplesteph");
-        assertEquals(user.getLogin(), "simplesteph");
 
 
     }

@@ -29,14 +29,14 @@ public class Issue {
     private Milestone milestone;
     private Boolean locked;
     private Integer comments;
-    private PullRequest pullRequest;
     private Object closedAt;
     private Instant createdAt;
     private Instant updatedAt;
     private List<Assignee> assignees = null;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     private String owner;
-    private String repo;
+    private Integer repoId;
+    private Integer assigneeId;
 
     /**
      * No args constructor for use in serialization
@@ -70,7 +70,7 @@ public class Issue {
      * @param user
      * @param comments
      */
-    public Issue(Integer id, String url, String repositoryUrl, String labelsUrl, String commentsUrl, String eventsUrl, String htmlUrl, Integer number, String state, String title, String body, User user, List<Label> labels, Assignee assignee, Milestone milestone, Boolean locked, Integer comments, PullRequest pullRequest, Object closedAt, Instant createdAt, Instant updatedAt, List<Assignee> assignees) {
+    public Issue(Integer id, String url, String repositoryUrl, String labelsUrl, String commentsUrl, String eventsUrl, String htmlUrl, Integer number, String state, String title, String body, User user, List<Label> labels, Assignee assignee, Milestone milestone, Boolean locked, Integer comments, Object closedAt, Instant createdAt, Instant updatedAt, List<Assignee> assignees) {
         super();
         this.id = id;
         this.url = url;
@@ -89,7 +89,6 @@ public class Issue {
         this.milestone = milestone;
         this.locked = locked;
         this.comments = comments;
-        this.pullRequest = pullRequest;
         this.closedAt = closedAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -98,7 +97,16 @@ public class Issue {
 
     
     
-    public String getOwner() {
+    
+    public Integer getAssigneeId() {
+		return assigneeId;
+	}
+
+	public void setAssigneeId(Integer assigneeId) {
+		this.assigneeId = assigneeId;
+	}
+
+	public String getOwner() {
 		return owner;
 	}
 
@@ -106,12 +114,12 @@ public class Issue {
 		this.owner = owner;
 	}
 
-	public String getRepo() {
-		return repo;
+	public Integer getRepoId() {
+		return repoId;
 	}
 
-	public void setRepo(String repo) {
-		this.repo = repo;
+	public void setRepoId(Integer repoId) {
+		this.repoId = repoId;
 	}
 
 	public Integer getId() {
@@ -335,19 +343,6 @@ public class Issue {
         return this;
     }
 
-    public PullRequest getPullRequest() {
-        return pullRequest;
-    }
-
-    public void setPullRequest(PullRequest pullRequest) {
-        this.pullRequest = pullRequest;
-    }
-
-    public Issue withPullRequest(PullRequest pullRequest) {
-        this.pullRequest = pullRequest;
-        return this;
-    }
-
     public Object getClosedAt() {
         return closedAt;
     }
@@ -416,19 +411,18 @@ public class Issue {
     public static Issue fromJson(JSONObject jsonObject) {
 
         Issue issue = new Issue();
-        issue.withUrl(jsonObject.getString(URL_FIELD));
-        issue.withHtmlUrl(jsonObject.getString(HTML_URL_FIELD));
+        issue.withId(jsonObject.getInt(ID_FIELD));
         issue.withTitle(jsonObject.getString(TITLE_FIELD));
-        issue.withCreatedAt(Instant.parse(jsonObject.getString(CREATED_AT_FIELD)));
-        issue.withUpdatedAt(Instant.parse(jsonObject.getString(UPDATED_AT_FIELD)));
-        issue.withNumber(jsonObject.getInt(NUMBER_FIELD));
         issue.withState(jsonObject.getString(STATE_FIELD));
         issue.withBody(jsonObject.getString(BODY_FIELD));
-        issue.withId(jsonObject.getInt(ID_FIELD));
+        issue.withCreatedAt(Instant.parse(jsonObject.getString(CREATED_AT_FIELD)));
+        issue.withUpdatedAt(Instant.parse(jsonObject.getString(UPDATED_AT_FIELD)));
 
-        // user is mandatory
-        User user = User.fromJson(jsonObject.getJSONObject(USER_FIELD));
-        issue.withUser(user);
+        
+        if( !jsonObject.isNull(ASSIGNEE_FIELD)) {
+        	jsonObject = jsonObject.getJSONObject(ASSIGNEE_FIELD);
+        	issue.setAssigneeId(jsonObject.getInt(ID_FIELD));
+        }
 
         return issue;
     }

@@ -21,7 +21,7 @@ public class GitHubSourceConnectorConfigTest {
     @Before
     public void setUpInitialConfig() {
         config = new HashMap<>();
-        config.put(OWNER_CONFIG, "foo");
+        config.put(ORGANIZATION_CONFIG, "foo");
         config.put(SINCE_CONFIG, "2017-04-26T01:23:45Z");
         config.put(BATCH_SIZE_CONFIG, "100");
         config.put(TOPIC_CONFIG, "github-issues");

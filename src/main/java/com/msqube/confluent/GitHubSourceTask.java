@@ -88,8 +88,7 @@ public class GitHubSourceTask extends SourceTask {
     		jsonResponse = gitHubHttpAPIClient.getNextItems(requestUrl,config.getAuthTokenConfig());
     		for (Object obj : jsonResponse.getArray()) {
     			Issue issue = Issue.fromJson((JSONObject) obj);
-    			issue.setOwner(repo.getRepoOwner());
-    			issue.setRepo(repo.getRepoName());
+    			issue.setRepoId(repo.getRepoId());
     			SourceRecord sourceRecord = new SourceRecord(
     					sourcePartition(),
     					sourceOffset(),
@@ -110,8 +109,7 @@ public class GitHubSourceTask extends SourceTask {
     		jsonResponse = gitHubHttpAPIClient.getNextItems(requestUrl,config.getAuthTokenConfig());
     		for (Object obj : jsonResponse.getArray()) {
     			Commit commit = Commit.fromJson((JSONObject) obj);
-    			commit.setOwner(repo.getRepoOwner());
-    			commit.setRepo(repo.getRepoName());
+    			commit.setRepoId(repo.getRepoId());
     			SourceRecord sourceRecord = new SourceRecord(
     					sourcePartition(),
     					sourceOffset(),
@@ -121,6 +119,28 @@ public class GitHubSourceTask extends SourceTask {
     					buildRecord.buildRecordValue(commit));
     			records.add(sourceRecord);
     			i += 1;
+    		}
+    		
+    		// "Pull Request" Changes 1:
+    		requestUrl= String.format(
+    				"https://api.github.com/repos/%s/%s/pulls?state=all",
+    				repo.getRepoOwner(),
+    				repo.getRepoName());
+    		jsonResponse = gitHubHttpAPIClient.getNextItems(requestUrl,config.getAuthTokenConfig());
+    		for (Object obj : jsonResponse.getArray()) {
+    			PullRequest pull = PullRequest.fromJson((JSONObject) obj,nextQuerySince);
+    			pull.setRepoId(repo.getRepoId());
+    			if(pull.getState() != null) {
+    				SourceRecord sourceRecord = new SourceRecord(
+    						sourcePartition(),
+    						sourceOffset(),
+    						config.getTopic(),
+    						null, // partition will be inferred by the framework
+    						SCHEMA_PULLREQUEST,
+    						buildRecord.buildRecordValue(pull));
+    				records.add(sourceRecord);
+    				i += 1;
+    			}
     		}
 
     	}

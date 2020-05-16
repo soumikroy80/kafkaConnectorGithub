@@ -26,9 +26,9 @@ public class GitHubSourceTaskTest {
 
     private Map<String, String> initialConfig() {
         Map<String, String> baseProps = new HashMap<>();
-        baseProps.put(OWNER_CONFIG, "apache");
+        baseProps.put(ORGANIZATION_CONFIG, "apache");
         baseProps.put(SINCE_CONFIG, "2017-04-26T01:23:44Z");
-        baseProps.put(OWNER_TOKEN_CONFIG, "token----keys");
+        baseProps.put(OWNER_TOKEN_CONFIG, "112abd46c2a641362ac6fee07f8b756c43400438");
         baseProps.put(BATCH_SIZE_CONFIG, batchSize.toString());
         baseProps.put(TOPIC_CONFIG, "github-issues");
         return baseProps;

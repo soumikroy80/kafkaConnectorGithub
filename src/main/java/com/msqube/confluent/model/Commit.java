@@ -7,38 +7,19 @@ import java.time.Instant;
 import org.json.JSONObject;
 
 public class Commit {
-	private String committerLogin;
+	private Integer commitId;
 	private String committerEmail;
-	private String committerName;
 	private String commitMessage;
 	private Instant committedAt;
-	private String owner;
-	private String repo;
+	private Integer userId = 11111111;
+	private Integer repoId;
 
-	
-	
-	public String getOwner() {
-		return owner;
+	public Integer getCommitId() {
+		return commitId;
 	}
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
-
-	public String getRepo() {
-		return repo;
-	}
-
-	public void setRepo(String repo) {
-		this.repo = repo;
-	}
-
-	public String getCommitterLogin() {
-		return committerLogin;
-	}
-
-	public void setCommitterLogin(String committerLogin) {
-		this.committerLogin = committerLogin;
+	public void setCommitId(Integer commitId) {
+		this.commitId = commitId;
 	}
 
 	public String getCommitterEmail() {
@@ -47,14 +28,6 @@ public class Commit {
 
 	public void setCommitterEmail(String committerEmail) {
 		this.committerEmail = committerEmail;
-	}
-
-	public String getCommitterName() {
-		return committerName;
-	}
-
-	public void setCommitterName(String committerName) {
-		this.committerName = committerName;
 	}
 
 	public String getCommitMessage() {
@@ -73,15 +46,33 @@ public class Commit {
 		this.committedAt = committedAt;
 	}
 
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	public Integer getRepoId() {
+		return repoId;
+	}
+
+	public void setRepoId(Integer repoId) {
+		this.repoId = repoId;
+	}
+
 	public static Commit fromJson(JSONObject commitBody) {
 		Commit commit = new Commit();
+		if(!commitBody.isNull(AUTHOR_FIELD)) {
+			commit.setUserId(commitBody.getJSONObject(AUTHOR_FIELD).getInt(ID_FIELD));
+		}
 		JSONObject jsonObject = commitBody.getJSONObject(COMMIT_FIELD);
 		commit.setCommitMessage(jsonObject.getString(COMMIT_MESSAGE_FIELD));
 
-		jsonObject = jsonObject.getJSONObject(COMMITTER_FIELD);
-		commit.setCommittedAt(Instant.parse(jsonObject.getString(COMMITTED_AT_FIELD)));
-		commit.setCommitterEmail(jsonObject.getString(USER_EMAIL_FIELD));
-		commit.setCommitterName(jsonObject.getString(COMMIT_NAME_FIELD));
+		jsonObject = jsonObject.getJSONObject(AUTHOR_FIELD);
+		commit.setCommittedAt(Instant.parse(jsonObject.getString(DATE_FIELD)));
+		commit.setCommitterEmail(jsonObject.getString(EMAIL_FIELD));
 
 		return commit;
 

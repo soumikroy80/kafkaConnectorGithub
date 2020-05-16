@@ -7,10 +7,22 @@ import java.time.Instant;
 import org.json.JSONObject;
 
 public class Repository {
+	
+	private Integer repoId;
 	private String repoName;
 	private String repoOwner;
 	private String repoDescription;
 	private Instant createdAt;
+
+	
+	
+	public Integer getRepoId() {
+		return repoId;
+	}
+
+	public void setRepoId(Integer repoId) {
+		this.repoId = repoId;
+	}
 
 	public String getRepoName() {
 		return repoName;
@@ -46,10 +58,13 @@ public class Repository {
 
 	public static Repository formJson(JSONObject jsonObject) {
 		Repository repo = new Repository();
+		repo.setRepoId(jsonObject.getInt(ID_FIELD));
+		repo.setRepoName(jsonObject.getString(NAME_FIELD));
 		repo.setCreatedAt(Instant.parse(jsonObject.getString(CREATED_AT_FIELD)));
-		if (!jsonObject.isNull(REPO_DESC_FIELD))
-			repo.setRepoDescription(jsonObject.getString(REPO_DESC_FIELD));
-		repo.setRepoName(jsonObject.getString(COMMIT_NAME_FIELD));
+		
+		if (!jsonObject.isNull(DESC_FIELD))
+			repo.setRepoDescription(jsonObject.getString(DESC_FIELD));
+		
 		return repo;
 
 	}

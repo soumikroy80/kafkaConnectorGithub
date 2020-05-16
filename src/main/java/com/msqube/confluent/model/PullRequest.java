@@ -1,112 +1,127 @@
-
 package com.msqube.confluent.model;
-
-import org.json.JSONObject;
 
 import static com.msqube.confluent.GitHubSchemas.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.Instant;
+
+import org.json.JSONObject;
+
+import com.msqube.confluent.utils.DateUtils;
 
 public class PullRequest {
 
-    private String url;
-    private String htmlUrl;
-    private String diffUrl;
-    private String patchUrl;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	private int pullId;
+	private Integer repoId;
+	private String title;
+	private String state;
+	private String body;
+	private Integer submitterId;
+	private Instant createdAt;
+	private Instant updatedAt;
+	private Instant closedAt = Instant.parse("1900-01-01T00:00:00Z");
+	private Instant mergedAt = Instant.parse("1900-01-01T00:00:00Z");
 
-    /**
-     * No args constructor for use in serialization
-     * 
-     */
-    public PullRequest() {
-    }
+	public int getPullId() {
+		return pullId;
+	}
 
-    /**
-     * 
-     * @param diffUrl
-     * @param htmlUrl
-     * @param patchUrl
-     * @param url
-     */
-    public PullRequest(String url, String htmlUrl, String diffUrl, String patchUrl) {
-        super();
-        this.url = url;
-        this.htmlUrl = htmlUrl;
-        this.diffUrl = diffUrl;
-        this.patchUrl = patchUrl;
-    }
+	public void setPullId(int pullId) {
+		this.pullId = pullId;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public Integer getRepoId() {
+		return repoId;
+	}
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+	public void setRepoId(Integer repoId) {
+		this.repoId = repoId;
+	}
 
-    public PullRequest withUrl(String url) {
-        this.url = url;
-        return this;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public String getHtmlUrl() {
-        return htmlUrl;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public void setHtmlUrl(String htmlUrl) {
-        this.htmlUrl = htmlUrl;
-    }
+	public String getState() {
+		return state;
+	}
 
-    public PullRequest withHtmlUrl(String htmlUrl) {
-        this.htmlUrl = htmlUrl;
-        return this;
-    }
+	public void setState(String state) {
+		this.state = state;
+	}
 
-    public String getDiffUrl() {
-        return diffUrl;
-    }
+	public String getBody() {
+		return body;
+	}
 
-    public void setDiffUrl(String diffUrl) {
-        this.diffUrl = diffUrl;
-    }
+	public void setBody(String body) {
+		this.body = body;
+	}
 
-    public PullRequest withDiffUrl(String diffUrl) {
-        this.diffUrl = diffUrl;
-        return this;
-    }
+	public Integer getSubmitterId() {
+		return submitterId;
+	}
 
-    public String getPatchUrl() {
-        return patchUrl;
-    }
+	public void setSubmitterId(Integer submitterId) {
+		this.submitterId = submitterId;
+	}
 
-    public void setPatchUrl(String patchUrl) {
-        this.patchUrl = patchUrl;
-    }
+	public Instant getCreatedAt() {
+		return createdAt;
+	}
 
-    public PullRequest withPatchUrl(String patchUrl) {
-        this.patchUrl = patchUrl;
-        return this;
-    }
+	public void setCreatedAt(Instant createdAt) {
+		this.createdAt = createdAt;
+	}
 
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
+	public Instant getUpdatedAt() {
+		return updatedAt;
+	}
 
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+	public void setUpdatedAt(Instant updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 
-    public PullRequest withAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-        return this;
-    }
+	public Instant getClosedAt() {
+		return closedAt;
+	}
 
-    public static PullRequest fromJson(JSONObject pull_request) {
-        return new PullRequest()
-                .withUrl(pull_request.getString(PR_URL_FIELD))
-                .withHtmlUrl(pull_request.getString(PR_HTML_URL_FIELD));
+	public void setClosedAt(Instant closedAt) {
+		this.closedAt = closedAt;
+	}
 
-    }
+	public Instant getMergedAt() {
+		return mergedAt;
+	}
+
+	public void setMergedAt(Instant mergedAt) {
+		this.mergedAt = mergedAt;
+	}
+
+	public static PullRequest fromJson(JSONObject jsonObject, Instant nextQuerySince) {
+		PullRequest pull = new PullRequest();
+		Instant updatedField = Instant.parse(jsonObject.getString(UPDATED_AT_FIELD));
+		if (updatedField.compareTo(nextQuerySince) > 0) {
+			pull.setPullId(jsonObject.getInt(ID_FIELD));
+			pull.setUpdatedAt(Instant.parse(jsonObject.getString(UPDATED_AT_FIELD)));
+			pull.setCreatedAt(Instant.parse(jsonObject.getString(CREATED_AT_FIELD)));
+			pull.setState(jsonObject.getString(STATE_FIELD));
+			pull.setBody(jsonObject.getString(BODY_FIELD));
+			pull.setTitle(jsonObject.getString(TITLE_FIELD));
+			pull.setSubmitterId(jsonObject.getJSONObject(USER_FIELD).getInt(ID_FIELD));
+
+			if (!jsonObject.isNull(CLOSED_AT_FIELD)) {
+				pull.setClosedAt(Instant.parse(jsonObject.getString(CLOSED_AT_FIELD)));
+			}
+			if (!jsonObject.isNull(MERGED_AT_FIELD)) {
+				pull.setMergedAt(Instant.parse(jsonObject.getString(MERGED_AT_FIELD)));
+			}
+		}
+		return pull;
+
+	}
+
 }
